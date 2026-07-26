@@ -20,6 +20,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
 
   useEffect(() => {
     dispatch(commentsAction.load(post.id));
+    setVisible(false);
   }, [post.id, dispatch]);
 
   const addComment = async ({ name, email, body }: CommentData) => {
@@ -30,7 +31,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       postId: post.id,
     };
 
-    dispatch(commentsAction.add(newComment));
+    await dispatch(commentsAction.add(newComment));
   };
 
   const deleteComment = async (commentId: number) => {
