@@ -7,9 +7,9 @@ import {
 } from '../../api/comments';
 
 const initialState = {
-  loading: false,
-  comments: [] as Comment[],
-  error: '',
+  loaded: false,
+  items: [] as Comment[],
+  hasError: false,
 };
 
 export const load = createAsyncThunk(
@@ -40,42 +40,42 @@ export const commentsSlice = createSlice({
   initialState,
   reducers: {
     clear(state) {
-      state.comments = [];
+      state.items = [];
     },
   },
   extraReducers: builder => {
     builder
       // load
       .addCase(load.pending, state => {
-        state.loading = true;
-        state.error = '';
+        state.loaded = false;
+        state.hasError = false;
       })
       .addCase(load.fulfilled, (state, action) => {
-        state.comments = action.payload;
-        state.loading = false;
+        state.items = action.payload;
+        state.loaded = true;
       })
       .addCase(load.rejected, state => {
-        state.error = 'Error';
-        state.loading = false;
+        state.hasError = true;
+        state.loaded = true;
       })
       // add
       .addCase(add.pending, state => {
-        state.error = '';
+        state.hasError = false;
       })
       .addCase(add.fulfilled, (state, action: PayloadAction<Comment>) => {
-        state.comments.push(action.payload);
+        state.items.push(action.payload);
       })
       .addCase(add.rejected, state => {
-        state.error = 'Error';
+        state.hasError = true;
       })
       // remove
       .addCase(remove.fulfilled, (state, action: PayloadAction<number>) => {
-        state.comments = state.comments.filter(
+        state.items = state.items.filter(
           comment => comment.id !== action.payload,
         );
       })
       .addCase(remove.rejected, state => {
-        state.error = 'Error';
+        state.hasError = true;
       });
   },
 });

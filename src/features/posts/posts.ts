@@ -3,9 +3,9 @@ import { Post } from '../../types/Post';
 import { getUserPosts } from '../../api/posts';
 
 const initialState = {
-  loading: false,
-  posts: [] as Post[],
-  error: '',
+  loaded: false,
+  items: [] as Post[],
+  hasError: false,
 };
 
 export const loadPosts = createAsyncThunk(
@@ -19,35 +19,27 @@ export const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    // add(state, { payload }: PayloadAction<Post>) {
-    //   state.posts.push(payload);
-    // },
-    // set(state, { payload }: PayloadAction<Post[]>) {
-    //   state.posts = payload;
-    // },
-    // remove(state, { payload }: PayloadAction<Post>) {
-    //   state.posts = state.posts.filter(post => post !== payload);
-    // },
     clear(state) {
-      state.posts = [];
+      state.items = [];
     },
   },
   extraReducers: builder => {
     builder.addCase(loadPosts.pending, state => {
-      state.loading = true;
+      state.loaded = false;
+      state.hasError = false;
     });
 
     builder.addCase(loadPosts.fulfilled, (state, action) => {
-      state.posts = action.payload;
-      state.loading = false;
+      state.items = action.payload;
+      state.loaded = true;
     });
 
     builder.addCase(loadPosts.rejected, state => {
-      state.error = 'Error';
-      state.loading = false;
+      state.hasError = true;
+      state.loaded = true;
     });
   },
 });
 
 export default postsSlice.reducer;
-export const { /* add, remove, set, */ clear } = postsSlice.actions;
+export const { clear } = postsSlice.actions;
